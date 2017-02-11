@@ -49,12 +49,11 @@ def drawStars(screen):
 
 def makePlanet():
     mouse = pygame.mouse.get_pressed()
-    if mouse[0] == 1:
-        x,y = pygame.mouse.get_pos()
-        pos = Vec2d(x,y)       
-        if (len(planetCoords) <= 10):
-            planetCoords.append(pos)
-            planetMasses.append(100)
+    x,y = pygame.mouse.get_pos()
+    pos = Vec2d(x,y)       
+    if (len(planetCoords) <= 10):
+        planetCoords.append(pos)
+        planetMasses.append(100)
             
 def drawRocket(screen,coords,color):
     width = 20
@@ -72,16 +71,16 @@ def drawPlanets(screen,coords,colorlist):
 def button(text,color,x0,y0,w,h):
     mouse = pygame.mouse.get_pressed()
     x,y = pygame.mouse.get_pos()
-    if ((x>= x0 and x <= x0+w and y >= y0 and y<=y0+h)):
+    if (x>=x0 and x<=x0+w and y>=y0 and y<=y0+h):
         newColor = (color[0]*0.5,color[1]*0.5,color[2]*0.5)
-        pygame.draw.rect(screen, newColor,(x0,y0,w,h))
+        pygame.draw.rect(screen,newColor,(x0,y0,w,h))
     else:
-        pygame.draw.rect(screen, color,(x0,y0,w,h))
+        pygame.draw.rect(screen,color,(x0,y0,w,h))
     buttonFont = pygame.font.SysFont("monospace", 25)
     buttonText = buttonFont.render(text, False, white)
     screen.blit(buttonText,(x0+(w-buttonFont.size(text)[0])/2,y0+(h-buttonFont.size(text)[1])/2))
     if mouse[0] == 1:
-        if ((x>= x0 and x <= x0+w and y >= y0 and y<=y0+h)):
+        if (x>=x0 and x<=x0+w and y>=y0 and y<=y0+h):
             return True
     else:
         return False
@@ -97,14 +96,13 @@ dt = 5
 run = False
 level = 0
 reset = False
+butt = False
 
 while True:
-    for event in pygame.event.get():
-        if event.type == pygame.QUIT:
-             pygame.quit(); sys.exit()
-             
+
     screen.fill(black)
     drawStars(screen)
+
     if level==0:
         startFont = pygame.font.SysFont("monospace", 30)
         startText = startFont.render('Gravity Lines', False, white)
@@ -127,8 +125,8 @@ while True:
             planetMasses = []
             planetColors = [pink,red]
         elif level==2:
-            rocketCoords = Vec2d(.8*width,height/2)
-            rocketV = Vec2d(0,-.2)
+            rocketCoords = Vec2d(.2*width,*.75*height)
+            rocketV = Vec2d(.3,-.2)
             planetCoords = []
             planetMasses = []
             planetColors = [pink,red]
@@ -141,10 +139,12 @@ while True:
         drawRocket(screen,rocketCoords,white)
         if len(rocketPath)>1:
             pygame.draw.lines(screen,white,False,rocketPath,1)
-        if not run:
-            makePlanet()
         if button("Start",green,0,.8*height,.2*width,.2*height):
             run = True
+        else:
+            for event in pygame.event.get():
+                if (event.type == pygame.MOUSEBUTTONDOWN) and not run:
+                    makePlanet()
         if button("Reset",red,.8*width,.8*height,.2*width,.2*height):
             reset = True
         if collision(planetCoords,rocketCoords,width,height):
@@ -154,3 +154,7 @@ while True:
         step(screen,planetCoords,planetColors,planetMasses,rocketCoords,rocketMass,rocketV,rocketPath)
 
     pygame.display.update()
+    
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+             pygame.quit(); sys.exit()
