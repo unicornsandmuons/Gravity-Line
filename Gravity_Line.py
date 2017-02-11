@@ -6,6 +6,8 @@ import pymunk.pygame_util
 from pymunk import Vec2d
 import math, sys, random
 from SciStuff import unitVec,mag,gravity,collision
+from pygame import gfxdraw
+import random
 
 pygame.init()
 pygame.font.init()
@@ -21,6 +23,8 @@ white = (255,255,255)
 black = (0,0,0)
 pink = (255,200,200)
 
+MainColors = [red,green,blue,darkBlue,white,pink]
+
 screen = pygame.display.set_mode((width,height))
 screen.fill(black)
     
@@ -35,14 +39,23 @@ planetCoords = [Vec2d(530,300),Vec2d(300,500)]
 planetMasses = [100,100]
 planetColors = [pink,red]
 
+
+def drawStars(screen):
+    for i in range(10):
+        x = random.randint(0,width)
+        y = random.randint(0,height)
+        gfxdraw.pixel(screen, x, y, white)
+        
+
 def makePlanet():
     mouse = pygame.mouse.get_pressed()
     if mouse[0] == 1:
         x,y = pygame.mouse.get_pos()
-        pos = Vec2d(x,y)
-        planetCoords.append(pos)
-        planetMasses.append(100)
-        
+        pos = Vec2d(x,y)       
+        if (len(planetCoords) <= 10):
+            planetCoords.append(pos)
+            planetMasses.append(100)
+            
 def drawRocket(screen,coords,color):
     width = 20
     height = 10
@@ -51,18 +64,23 @@ def drawRocket(screen,coords,color):
 
 def drawPlanets(screen,coords,colorlist):
     radius = 50
+    counter = 0
     for element in planetCoords:
-        pygame.draw.circle(screen,white,(element[0],element[1]),radius,radius)
-        
+        pygame.draw.circle(screen,colorlist[counter%len(colorlist)],(element[0],element[1]),radius,radius)
+        counter += 1
+
 def button(text,color,x0,y0,w,h):
-    pygame.draw.rect(screen, color,(x0,y0,w,h))
+    mouse = pygame.mouse.get_pressed()
+    x,y = pygame.mouse.get_pos()
+    if ((x>= x0 and x <= x0+w and y >= y0 and y<=y0+h)):
+        newColor = (color[0]*0.5,color[1]*0.5,color[2]*0.5)
+        pygame.draw.rect(screen, newColor,(x0,y0,w,h))
+    else:
+        pygame.draw.rect(screen, color,(x0,y0,w,h))
     buttonFont = pygame.font.SysFont("monospace", 25)
     buttonText = buttonFont.render(text, False, white)
     screen.blit(buttonText,(x0+(w-buttonFont.size(text)[0])/2,y0+(h-buttonFont.size(text)[1])/2))
-
-    mouse = pygame.mouse.get_pressed()
     if mouse[0] == 1:
-        x,y = pygame.mouse.get_pos()
         if ((x>= x0 and x <= x0+w and y >= y0 and y<=y0+h)):
             return True
     else:
@@ -86,6 +104,7 @@ while True:
              pygame.quit(); sys.exit()
              
     screen.fill(black)
+    drawStars(screen)
     if level==0:
         startFont = pygame.font.SysFont("monospace", 30)
         startText = startFont.render('Gravity Lines', False, white)
@@ -110,15 +129,15 @@ while True:
         elif level==2:
             rocketCoords = Vec2d(.8*width,height/2)
             rocketV = Vec2d(0,-.2)
-            planetCoords = [Vec2d(530,300),Vec2d(300,500)]
-            planetMasses = [100,100]
+            planetCoords = []
+            planetMasses = []
             planetColors = [pink,red]
         rocketPath=[(rocketCoords[0],rocketCoords[1])]
         reset = False
         run = False
 
     if level>0:
-        drawPlanets(screen,planetCoords,planetColors)
+        drawPlanets(screen,planetCoords,MainColors)
         drawRocket(screen,rocketCoords,white)
         if len(rocketPath)>1:
             pygame.draw.lines(screen,white,False,rocketPath,1)
@@ -133,4 +152,5 @@ while True:
 
     if run:
         step(screen,planetCoords,planetColors,planetMasses,rocketCoords,rocketMass,rocketV,rocketPath)
+
     pygame.display.update()
