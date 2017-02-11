@@ -109,13 +109,17 @@ dt = 5          #time step
 run = False     #when simulation is running or not
 level = 0       #what level the game is on. 0 is start screen
 reset = False   #if simulation should be reset or not
+killme = True
 
 while True:
     #Exit
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
              pygame.quit(); sys.exit()
-             
+        if (event.type == pygame.MOUSEBUTTONDOWN) and not run and killme:
+            makePlanet()
+    killme = True
+    
     screen.fill(black)
     drawStars(screen)
     
@@ -162,10 +166,7 @@ while True:
             pygame.draw.lines(screen,white,False,rocketPath,1)
         if button("Start",green,0,.8*height,.2*width,.2*height):
             run = True
-        else:
-            for event in pygame.event.get():
-                if (event.type == pygame.MOUSEBUTTONDOWN) and not run:
-                    makePlanet()
+            killme = False
         if button("Reset",red,.8*width,.8*height,.2*width,.2*height):
             reset = True
         if collision(planetCoords,rocketCoords,width,height):
