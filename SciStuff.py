@@ -1,0 +1,36 @@
+import pygame
+from pygame.locals import *
+from pygame.color import *
+import pymunk
+import pymunk.pygame_util
+from pymunk import Vec2d
+import math, sys, random
+
+def mag(v):
+    return math.sqrt((v[0])**2 + (v[1])**2)
+
+def unitVec(v):
+    result = v/(mag(v))
+    return result
+
+def gravity(planetList,rocket,massesList,rocketMass):
+    G = 1
+    result = Vec2d(0,0)
+    for i in range(len(planetList)):
+        rhat = unitVec(planetList[i]-rocket)
+        r = mag(planetList[i]-rocket)
+        magnitude = ((G*massesList[i]*rocketMass)/(r*r))
+        grav = rhat*magnitude
+        result += grav
+    return result
+
+def collision(planetList,rocket,width,height):
+    for i in range(len(planetList)):
+        if (mag(planetList[i]-rocket) < 50):
+            return True
+    if (rocket[0] < 0 or rocket[0]>width):
+        return True
+    elif (rocket[1] <0 or rocket[1] > height):
+        return True
+    else:
+        return False

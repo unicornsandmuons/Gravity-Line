@@ -5,11 +5,14 @@ import pymunk
 import pymunk.pygame_util
 from pymunk import Vec2d
 import math, sys, random
+from SciStuff import unitVec,mag,gravity,collision
 
 pygame.init()
 
 width = 1080
 height = 600
+
+dt = 5
 
 red = (255,0,0)
 green = (0,255,0)
@@ -29,10 +32,7 @@ rocketCoords = Vec2d(width/2,height-height/10)
 rocketMass = 100
 rocketV = Vec2d(0,-0.2)
 
-dt = 5
-
-# planetCoords = [Vec2d(100,500),Vec2d(980,500)] #nice and periodic
-planetCoords = [Vec2d(530,300),Vec2d(300,560)]
+planetCoords = [Vec2d(530,300),Vec2d(300,500)]
 planetMasses = [100,100]
 planetColors = [pink,red]
 
@@ -46,41 +46,19 @@ def drawPlanets(screen,coords,colorlist):
     radius = 50
     for i in range(len(coords)):
         pygame.draw.circle(screen, colorlist[i], (coords[i][0],coords[i][1]), radius, radius)
-
-def mag(v):
-    return math.sqrt((v[0])**2 + (v[1])**2)
-
-def unitVec(v):
-    result = v/(mag(v))
-    return result
-
-def gravity(planetList,rocket,massesList,rocketMass):
-    G = 1
-    result = Vec2d(0,0)
-    for i in range(len(planetList)):
-        rhat = unitVec(planetList[i]-rocket)
-        r = mag(planetList[i]-rocket)
-        magnitude = ((G*massesList[i]*rocketMass)/(r*r))
-        grav = rhat*magnitude
-        result += grav
-    return result
-
-def collision(planetList,rocket):
-    for i in range(len(planetList)):
-        if (mag(planetList[i]-rocket) < 50):
-            return True
-    if (rocket[0] < 0 or rocket[0]>width):
-        return True
-    elif (rocket[1] <0 or rocket[1] > height):
-        return True
-    else:
-        return False
     
 def step(screen,planetCoords,planetColors,planetMasses,rocketCoords,rocketMass,rocketV):
     rocket = drawRocket(screen,rocketCoords,white)
     drawPlanets(screen,planetCoords,planetColors)
+    pygame.draw.rect(screen, green,(0,height-height/20,100,height/20))
+    mouse = pygame.mouse.get_pressed()
+    if mouse[0] == 1:
+        x,y = pygame.mouse.get_pos()
+        if (x>= 0 and x <= 100):
+            if (y >= height-height/20 and y<= height):
+                print("pressed fr")
     
-    if (not collision(planetCoords,rocketCoords)):
+    if (not collision(planetCoords,rocketCoords,width,height)):
         force = gravity(planetCoords,rocketCoords,planetMasses,rocketMass)
         a = force/rocketMass
         rocketV += a*dt
