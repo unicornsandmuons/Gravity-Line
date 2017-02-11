@@ -70,10 +70,9 @@ def drawRocket(screen,coords,color):
 
 #draws the planets by looping through the planet list
 def drawPlanets(screen,coords,colorlist):
-    radius = 50
     counter = 0
     for element in planetCoords:
-        pygame.draw.circle(screen,colorlist[counter%len(colorlist)],(element[0],element[1]),radius,radius)
+        pygame.draw.circle(screen,colorlist[counter%len(colorlist)],(element[0],element[1]),50,0)
         counter += 1
 
 #generic button that can have text. Color changed to make "pressed" look
@@ -94,10 +93,10 @@ def button(text,color,x0,y0,w,h):
     else:
         return False
 
-def text(text,x0,y0,w,h,color,size):
+def text(text,x0,y0,color,size):
     textFont = pygame.font.SysFont("monospace", size)
     makeText = textFont.render(text, False, color)
-    screen.blit(makeText,(x0+(w-textFont.size(text)[0])/2,y0+(h-textFont.size(text)[1])/2))
+    screen.blit(makeText,(x0,y0))
 
 #Iterate rocket
 def step(screen,pCoords,pMasses,rCoords,rMass,rV,rPath):
@@ -135,58 +134,66 @@ while True:
     screen.fill(black)
     drawStars(screen)
     
-    #Start and About screen 
-    if level==0:
-        text("Gravity Lines",-100+width*.5,height*.1,white,30)
-        drawPlanets(screen,planetCoords,planetColors)
-        drawRocket(screen,rocketCoords,white)
-        run = True
-        if collision(planetCoords,rocketCoords,width,height):
-            run = False
-        if button("START GAME",red,width/3.0-100,height/5,200,75):
-            level = -2
-            reset = True
-        if button("ABOUT",blue,2*width/3.0,height/5,200,75):
-            level = -1
-            reset = True
-    if level == -1:
-        text("This game is to learn about GRAVITY!",50,height*.1,white,30)
-        if button("Back to Menu",blue,width/2.0,height/2,200,75):
-            level = 0
-    if level==-2:
-        text("When two objects have mass they exert a force on each other that pulls them together",
-             50,height*0.1,white,30)
-        text("This force is called",50,height*0.1+35,white,30)
-        text("GRAVITY",.5*width,height*0.1+65,red,50)
-        if button("Play",blue,2*width/3.0,height/5,200,75):
-            level = 2
-            reset = True
-        text("Watch the rocket as it goes to the red planet",50,height/2.0,white,30)
-        text("You can even click to make new planets",50,height/2.0+40,white,30)
-        text("Try to get it into the yellow box without crashing",50,height/2.0+70,white,30)
-    if level == -3:
-        text("How does gravity work though?",50,height*0.1,white,50)
-        text("Isaac Newton was one of the first people to attempt to give a mathematical description of gravity",
-             20,height*0.1+60,white,25)
-        text("His work tells us that the force of gravity is an inverse square law",
-             20,height*0.1+80,white,25)
-        
-    #Reset planets and rocket to initial positions
+    #Text screens
+    if level<=0:
+        if level==0:
+            text("Gravity Lines",-100+width*.5,height*.1,white,30)
+            drawPlanets(screen,planetCoords,planetColors)
+            drawRocket(screen,rocketCoords,white)
+            run = True
+            if collision(planetCoords,rocketCoords,width,height):
+                run = False
+            if button("START GAME",red,width/3.0-100,height/5,200,75):
+                level = -2
+                reset = True
+            if button("ABOUT",blue,2*width/3.0,height/5,200,75):
+                level = -1
+                reset = True
+        elif level == -1:
+            text("This game is to learn about GRAVITY!",50,height*.1,white,30)
+            if button("Back to Menu",blue,width/2.0,height/2,200,75):
+                level = 0
+        elif level==-2:
+            text("When two objects have mass they exert a force on each other that pulls them together",
+                 50,height*0.1,white,30)
+            text("This force is called",50,height*0.1+35,white,30)
+            text("GRAVITY",.5*width,height*0.1+65,red,50)
+            if button("Play",blue,2*width/3.0,height/5,200,75):
+                level = 1
+                reset = True
+            text("Watch the rocket as it goes to the red planet",50,height/2.0,white,30)
+            text("You can even click to make new planets",50,height/2.0+40,white,30)
+            text("Try to get it into the yellow box without crashing",50,height/2.0+70,white,30)
+        elif level == -3:
+            text("How does gravity work though?",50,height*0.1,white,50)
+            text("Isaac Newton was one of the first people to attempt to give a mathematical description of gravity",
+                 20,height*0.1+60,white,25)
+            text("His work tells us that the force of gravity is an inverse square law",
+                 20,height*0.1+80,white,25)
 
+    #Reset planets and rocket to initial positions
     if reset:             
-        if level==2:
+        if level==1:
             rocketCoords = Vec2d(.2*width,.75*height)
             rocketV = Vec2d(.3,-.2)
-            planetCoords = [Vec2d(width-50,50)]
+            planetCoords = [Vec2d(.6*width,.6*height)]
             planetMasses = [100]
-            rocketCoordsi = rocketCoords
+        elif level==2:
+            rocketCoords = Vec2d(.2*width,.75*height)
+            rocketV = Vec2d(.3,-.2)
+            planetCoords = []
+            planetMasses = []
+
         rocketPath=[(rocketCoords[0],rocketCoords[1])]
         reset = False
         run = False
 
     #Reset rocket to initial position, but keep all added planets
     if resetRocket:
-        if level==2:
+        if level==1:
+            rocketCoords = Vec2d(.2*width,.75*height)
+            rocketV = Vec2d(.3,-.2)
+        elif level==2:
             rocketCoords = Vec2d(.2*width,.75*height)
             rocketV = Vec2d(.3,-.2)
         rocketPath=[(rocketCoords[0],rocketCoords[1])]
@@ -212,6 +219,10 @@ while True:
             resetRocket = True
         if collision(planetCoords,rocketCoords,width,height):
             run = False
+        if level==2:
+            if collisionRect(.4*width,.4*height,.2*width,.2*height):
+                run = False
+        
 
     if run:
         step(screen,planetCoords,planetMasses,rocketCoords,rocketMass,rocketV,rocketPath)
