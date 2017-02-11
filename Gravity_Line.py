@@ -13,7 +13,7 @@ pygame.font.init()
 width = 1080
 height = 600
 
-dt = .5
+dt = 5
 run = False
 level = 0
 reset = False
@@ -39,6 +39,14 @@ planetCoords = [Vec2d(530,300),Vec2d(300,500)]
 planetMasses = [100,100]
 planetColors = [pink,red]
 
+def makePlanet():
+    mouse = pygame.mouse.get_pressed()
+    if mouse[0] == 1:
+        x,y = pygame.mouse.get_pos()
+        pos = Vec2d(x,y)
+        planetCoords.append(pos)
+        planetMasses.append(100)
+        
 def drawRocket(screen,coords,color):
     width = 20
     height = 10
@@ -47,9 +55,9 @@ def drawRocket(screen,coords,color):
 
 def drawPlanets(screen,coords,colorlist):
     radius = 50
-    for i in range(len(coords)):
-        pygame.draw.circle(screen, colorlist[i], (coords[i][0],coords[i][1]), radius, radius)
-
+    for element in planetCoords:
+        pygame.draw.circle(screen,white,(element[0],element[1]),radius,radius)
+        
 def button(text,color,x0,y0,w,h):
     pygame.draw.rect(screen, color,(x0,y0,w,h))
     buttonFont = pygame.font.SysFont("monospace", 25)
@@ -94,20 +102,22 @@ while True:
             #Reset to initial conditions
             rocketCoords = Vec2d(.8*width,height/2)
             rocketV = Vec2d(0,-.2)
-            planetCoords = [Vec2d(530,300),Vec2d(300,500)]
-            planetMasses = [100,100]
+            planetCoords = []
+            planetMasses = []
             planetColors = [pink,red]
             reset = False
+            run = False
             
         drawPlanets(screen,planetCoords,planetColors)
         drawRocket(screen,rocketCoords,white)
+        makePlanet()
 
         if button("Start",green,0,.8*height,.2*width,.2*height):
             run = True
         if button("Reset",red,.8*width,.8*height,.2*width,.2*height):
             reset = True
         if collision(planetCoords,rocketCoords,width,height):
-            pygame.quit(); sys.exit()
+            run = False
 
     if run:
         step(screen,planetCoords,planetColors,planetMasses,rocketCoords,rocketMass,rocketV)
