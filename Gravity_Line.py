@@ -42,7 +42,7 @@ planetCoords = [Vec2d(530,300),Vec2d(300,500)]
 planetMasses = [100,100]
 planetColors = [pink,red]
 
-winBox = (width-200,0,200,200)
+winBox = (.8*width,0,.2*width,.2*height)
 
 
 #randomly draws stars on screen in background
@@ -94,10 +94,10 @@ def button(text,color,x0,y0,w,h):
     else:
         return False
 
-def text(text,x0,y0,color,size):
+def text(text,x0,y0,w,h,color,size):
     textFont = pygame.font.SysFont("monospace", size)
     makeText = textFont.render(text, False, color)
-    screen.blit(makeText,(x0,y0))
+    screen.blit(makeText,(x0+(w-textFont.size(text)[0])/2,y0+(h-textFont.size(text)[1])/2))
 
 #Iterate rocket
 def step(screen,pCoords,pMasses,rCoords,rMass,rV,rPath):
@@ -116,7 +116,7 @@ def passedLevel(rCoords,winarea):
 
 def killme():
     x,y = pygame.mouse.get_pos()
-    return y>=.8*height and (x<=.2*width or x>=.8*width)
+    return (y>=.8*height or y<=.2*height)and (x<=.2*width or x>=.8*width)
 
 dt = 5          #time step
 run = False     #when simulation is running or not
@@ -157,7 +157,7 @@ while True:
         text("When two objects have mass they exert a force on each other that pulls them together",
              50,height*0.1,white,30)
         text("This force is called",50,height*0.1+35,white,30)
-        text("GRAVITY",width/2.0,height*0.1+65,red,50)
+        text("GRAVITY",.5*width,height*0.1+65,red,50)
         if button("Play",blue,2*width/3.0,height/5,200,75):
             level = 2
             reset = True
@@ -171,6 +171,8 @@ while True:
         text("His work tells us that the force of gravity is an inverse square law",
              20,height*0.1+80,white,25)
         
+    #Reset planets and rocket to initial positions
+
     if reset:             
         if level==2:
             rocketCoords = Vec2d(.2*width,.75*height)
@@ -181,11 +183,21 @@ while True:
         rocketPath=[(rocketCoords[0],rocketCoords[1])]
         reset = False
         run = False
-        
+
+    #Reset rocket to initial position, but keep all added planets
+    if resetRocket:
+        if level==2:
+            rocketCoords = Vec2d(.2*width,.75*height)
+            rocketV = Vec2d(.3,-.2)
+        rocketPath=[(rocketCoords[0],rocketCoords[1])]
+        resetRocket = False
+        run = False
+
     #Gameplay events
     if level>0:
         drawPlanets(screen,planetCoords,MainColors)
         drawRocket(screen,rocketCoords,white)
+        pygame.draw.rect(screen,yellow,(.8*width,0,.2*width,.2*height),2)
         if len(rocketPath)>1:
             pygame.draw.lines(screen,white,False,rocketPath,1)
         if button("Start",green,0,.8*height,.2*width,.2*height):
