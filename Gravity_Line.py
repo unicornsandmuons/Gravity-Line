@@ -179,7 +179,10 @@ while True:
                 reset = True
         if level == -4:
             text("HOW U HERE TOO FUCK",50,height*0.1,white,50)
-
+            if button("Play",blue,2*width/3.0,height*0.8,200,75):
+                level = 3
+                reset = True
+        
     #Reset planets and rocket to initial positions
     if reset:             
         if level==1:
@@ -192,6 +195,11 @@ while True:
             rocketV = Vec2d(.3,-.2)
             planetCoords = []
             planetMasses = []
+        elif level==3:
+            rocketCoords = Vec2d(.2*width,.75*height)
+            rocketV = Vec2d(.3,-.2)
+            planetCoords = [Vec2d(.4*width,.45*height),Vec2d(.2*width,.5*height)]
+            planetMasses = [100,100]
         rocketPath=[(rocketCoords[0],rocketCoords[1])]
         reset = False
         run = False
@@ -210,7 +218,6 @@ while True:
         rocketPath=[(rocketCoords[0],rocketCoords[1])]
         resetRocket = False
         run = False
-
   
     #Gameplay events
     if level>0:
