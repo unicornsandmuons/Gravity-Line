@@ -24,13 +24,12 @@ def gravity(planetList,rocket,massesList,rocketMass):
         result += grav
     return result
 
-def collision(planetList,rocket,width,height):
+def collision(planetList,rocket,w,h):
     for i in range(len(planetList)):
         if (mag(planetList[i]-rocket) < 50):
             return True
-    if (rocket[0] < 0 or rocket[0]>width):
-        return True
-    elif (rocket[1] <0 or rocket[1] > height):
-        return True
-    else:
-        return False
+    return rocket[0]<0 or rocket[0]>w or rocket[1]<0 or rocket[1]>h
+
+def collisionRect(rocket,x0,y0,w,h):
+    pygame.draw.rect(screen,(255,165,0),(x0,y0,w,h))
+    return rocket[0]>=x0 and rocket[0]<=x0+w and rocket[1]>=y0 and rocket[1]<=y0+h
