@@ -5,7 +5,7 @@ import pymunk
 import pymunk.pygame_util
 from pymunk import Vec2d
 import math, sys, random
-from SciStuff import unitVec,mag,gravity,collision
+from SciStuff import unitVec,mag,gravity,collision,collisionRect
 from pygame import gfxdraw
 import random
 
@@ -149,11 +149,11 @@ while True:
             if button("ABOUT",blue,2*width/3.0,height/5,200,75):
                 level = -1
                 reset = True
-        elif level == -1:
+        if level == -1:
             text("This game is to learn about GRAVITY!",50,height*.1,white,30)
             if button("Back to Menu",blue,width/2.0,height/2,200,75):
                 level = 0
-        elif level==-2:
+        if level==-2:
             text("When two objects have mass they exert a force on each other that pulls them together",
                  50,height*0.1,white,30)
             text("This force is called",50,height*0.1+35,white,30)
@@ -164,12 +164,21 @@ while True:
             text("Watch the rocket as it goes to the red planet",50,height/2.0,white,30)
             text("You can even click to make new planets",50,height/2.0+40,white,30)
             text("Try to get it into the yellow box without crashing",50,height/2.0+70,white,30)
-        elif level == -3:
+        if level == -3:
             text("How does gravity work though?",50,height*0.1,white,50)
             text("Isaac Newton was one of the first people to attempt to give a mathematical description of gravity",
                  20,height*0.1+60,white,25)
             text("His work tells us that the force of gravity is an inverse square law",
                  20,height*0.1+80,white,25)
+            text("This means that the force is proportional to 1 over the square of the distance between the objects",
+                 20,height*0.1+110,white,25)
+            text("In the next level, try to get inside the yellow square without hitting the massless rectangle",
+                 20,height*0.1+150,white,25)
+            if button("Play",blue,2*width/3.0,height*0.8,200,75):
+                level = 3
+                reset = True
+        if level == -4:
+            text("HOW U HERE TOO FUCK",50,height*0.1,white,50)
 
     #Reset planets and rocket to initial positions
     if reset:             
@@ -183,7 +192,6 @@ while True:
             rocketV = Vec2d(.3,-.2)
             planetCoords = []
             planetMasses = []
-
         rocketPath=[(rocketCoords[0],rocketCoords[1])]
         reset = False
         run = False
@@ -197,9 +205,13 @@ while True:
             rocketCoords = Vec2d(.2*width,.75*height)
             rocketV = Vec2d(.3,-.2)
         rocketPath=[(rocketCoords[0],rocketCoords[1])]
+        if level==3:
+            rocketCoords = Vec2d(.2*width,.75*height)
+            rocketV = Vec2d(.3,-.2)
         resetRocket = False
         run = False
 
+  
     #Gameplay events
     if level>0:
         drawPlanets(screen,planetCoords,MainColors)
@@ -213,17 +225,17 @@ while True:
             run = False
             if button("You Won! Next Level",yellow,width/2-100,height/2-30,200,60):
                 level = -1*level-1
+        elif level==2:
+            pygame.draw.rect(screen,(255,165,0),(.4*width,.45*height,.2*width,.1*height))
+            if collisionRect(rocketCoords,.4*width,.45*height,.2*width,.1*height):
+                run = False
         if button("Reset All",red,.8*width,.8*height,.2*width,.2*height):
             reset = True
         if button("Reset Rocket",blue,0,0,0.2*width,0.2*height):
             resetRocket = True
         if collision(planetCoords,rocketCoords,width,height):
             run = False
-        if level==2:
-            if collisionRect(.4*width,.4*height,.2*width,.2*height):
-                run = False
-        
-
+                
     if run:
         step(screen,planetCoords,planetMasses,rocketCoords,rocketMass,rocketV,rocketPath)
 

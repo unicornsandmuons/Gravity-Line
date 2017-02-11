@@ -31,5 +31,4 @@ def collision(planetList,rocket,w,h):
     return rocket[0]<0 or rocket[0]>w or rocket[1]<0 or rocket[1]>h
 
 def collisionRect(rocket,x0,y0,w,h):
-    pygame.draw.rect(screen,(255,165,0),(x0,y0,w,h))
     return rocket[0]>=x0 and rocket[0]<=x0+w and rocket[1]>=y0 and rocket[1]<=y0+h
