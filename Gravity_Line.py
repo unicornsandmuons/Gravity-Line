@@ -174,9 +174,11 @@ while True:
              20,height*0.1+110,white,25)
         text("In the next level, try to get inside the yellow square without hitting the massless rectangle",
              20,height*0.1+150,white,25)
-        if button("Play",blue,2*width/3.0,height/5,200,75):
+        if button("Play",blue,2*width/3.0,height*0.8,200,75):
             level = 3
             reset = True
+    if level == -4:
+        text("HOW U HERE TOO FUCK",50,height*0.1,white,50)
 
         
     #Reset planets and rocket to initial positions
