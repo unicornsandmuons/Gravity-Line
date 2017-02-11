@@ -114,22 +114,23 @@ def passedLevel(rCoords,winarea):
         return True
     return False
 
+def killme():
+    x,y = pygame.mouse.get_pos()
+    return y>=.8*height and (x<=.2*width or x>=.8*width)
 
 dt = 5          #time step
 run = False     #when simulation is running or not
 level = 0       #what level the game is on. 0 is start screen
 reset = False   #if simulation should be reset or not
-killme = True
 resetRocket = False
 
 while True:
     #Exit
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
-             pygame.quit(); sys.exit()
-        if (event.type == pygame.MOUSEBUTTONDOWN) and not run and killme:
+            pygame.quit(); sys.exit()
+        if (event.type == pygame.MOUSEBUTTONDOWN) and not run and not killme():
             makePlanet()
-    killme = True
     
     screen.fill(black)
     drawStars(screen)
