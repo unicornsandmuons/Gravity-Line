@@ -8,11 +8,13 @@ import math, sys, random
 from SciStuff import unitVec,mag,gravity,collision
 
 pygame.init()
+pygame.font.init()
+myfont = pygame.font.SysFont("monospace", 30)
 
 width = 1080
 height = 600
 
-dt = 5
+dt = .5
 
 red = (255,0,0)
 green = (0,255,0)
@@ -72,5 +74,8 @@ while True:
              pygame.quit(); sys.exit()
              
     screen.fill(black)
+    textsurface = myfont.render('Gravity Lines', False, white)
+    screen.blit(textsurface, (-100+width/2,100+height/2))
+    
     step(screen,planetCoords,planetColors,planetMasses,rocketCoords,rocketMass,rocketV)
     pygame.display.update()
