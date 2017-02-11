@@ -72,7 +72,7 @@ def drawRocket(screen,coords,color):
 def drawPlanets(screen,coords,colorlist):
     counter = 0
     for element in planetCoords:
-        pygame.draw.circle(screen,colorlist[counter%len(colorlist)],(element[0],element[1]),50,0)
+        pygame.draw.circle(screen,colorlist[counter%len(colorlist)],(int(element[0]),int(element[1])),50,0)
         counter += 1
 
 #generic button that can have text. Color changed to make "pressed" look
@@ -175,7 +175,7 @@ while True:
             text("In the next level, try to get inside the yellow square without hitting the massless rectangle",
                  20,height*0.1+150,white,25)
             if button("Play",blue,2*width/3.0,height*0.8,200,75):
-                level = 3
+                level = 2
                 reset = True
         if level == -4:
             text("HOW U HERE TOO FUCK",50,height*0.1,white,50)
@@ -204,10 +204,10 @@ while True:
         elif level==2:
             rocketCoords = Vec2d(.2*width,.75*height)
             rocketV = Vec2d(.3,-.2)
-        rocketPath=[(rocketCoords[0],rocketCoords[1])]
         if level==3:
             rocketCoords = Vec2d(.2*width,.75*height)
             rocketV = Vec2d(.3,-.2)
+        rocketPath=[(rocketCoords[0],rocketCoords[1])]
         resetRocket = False
         run = False
 
@@ -224,7 +224,7 @@ while True:
         if passedLevel(rocketCoords,winBox):
             run = False
             if button("You Won! Next Level",yellow,width/2-100,height/2-30,200,60):
-                level = -1*level-1
+                    level = -1*level-2
         elif level==2:
             pygame.draw.rect(screen,(255,165,0),(.4*width,.45*height,.2*width,.1*height))
             if collisionRect(rocketCoords,.4*width,.45*height,.2*width,.1*height):
