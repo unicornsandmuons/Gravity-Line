@@ -23,6 +23,7 @@ darkBlue = (0,0,128)
 white = (255,255,255)
 black = (0,0,0)
 pink = (255,200,200)
+yellow = (247,255,0)
 
 MainColors = [red,green,blue,darkBlue,white,pink]
 
@@ -40,6 +41,8 @@ rocketV = Vec2d(0,-0.2)
 planetCoords = [Vec2d(530,300),Vec2d(300,500)]
 planetMasses = [100,100]
 planetColors = [pink,red]
+
+winBox = (width-200,0,200,200)
 
 
 #randomly draws stars on screen in background
@@ -104,6 +107,13 @@ def step(screen,pCoords,pMasses,rCoords,rMass,rV,rPath):
     rCoords += rocketV*dt
     rPath.append((rCoords[0],rCoords[1]))
 
+def passedLevel(rCoords,winarea):
+    x0,y0,w,h = winarea[0],winarea[1],winarea[2],winarea[3]
+    x,y = rCoords[0],rCoords[1]
+    if (x>=x0 and x<=x0+w and y>=y0 and y<=y0+h):
+        return True
+    return False
+
 
 dt = 5          #time step
 run = False     #when simulation is running or not
@@ -128,7 +138,7 @@ while True:
         if collision(planetCoords,rocketCoords,width,height):
             run = False
         if button("START GAME",red,width/3.0-100,height/5,200,75):
-            level +=1
+            level = -2
             reset = True
         if button("ABOUT",blue,2*width/3.0,height/5,200,75):
             level = -1
@@ -137,19 +147,23 @@ while True:
         text("This game is to learn about GRAVITY!",50,height*.1,white,30)
         if button("Back to Menu",blue,width/2.0,height/2,200,75):
             level = 0
-
-    if reset: 
-        if level==1:
-            #Reset planets and rocket
-            rocketCoords = Vec2d(.8*width,height/2)
-            rocketV = Vec2d(0,-.2)
-            planetCoords = []
-            planetMasses = []
-        elif level==2:
-            rocketCoords = Vec2d(.2*width,*.75*height)
+    if level==-2:
+        text("When two objects have mass they exert a force on each other that pulls them together",
+             50,height*0.1,white,30)
+        text("This force is called",50,height*0.1+35,white,30)
+        text("GRAVITY",width/2.0,height*0.1+65,red,50)
+        if button("Play",blue,2*width/3.0,height/5,200,75):
+            level = 2
+            reset = True
+    if level == -3:
+        text("HOW TF U PASS BITCH",50,height*0.1,white,50)
+        
+    if reset:             
+        if level==2:
+            rocketCoords = Vec2d(.2*width,.75*height)
             rocketV = Vec2d(.3,-.2)
-            planetCoords = []
-            planetMasses = []
+            planetCoords = [Vec2d(width/2,height/2)]
+            planetMasses = [100]
         rocketPath=[(rocketCoords[0],rocketCoords[1])]
         reset = False
         run = False
@@ -166,6 +180,10 @@ while True:
             for event in pygame.event.get():
                 if (event.type == pygame.MOUSEBUTTONDOWN) and not run:
                     makePlanet()
+        if passedLevel(rocketCoords,winBox):
+            run = False
+            if button("You Won! Next Level",yellow,width/2-100,height/2-30,200,60):
+                level = -3
         if button("Reset",red,.8*width,.8*height,.2*width,.2*height):
             reset = True
         if collision(planetCoords,rocketCoords,width,height):
