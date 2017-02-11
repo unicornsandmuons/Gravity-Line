@@ -9,12 +9,12 @@ from SciStuff import unitVec,mag,gravity,collision
 
 pygame.init()
 pygame.font.init()
-myfont = pygame.font.SysFont("monospace", 30)
 
 width = 1080
 height = 600
 
 dt = .5
+run = False
 
 red = (255,0,0)
 green = (0,255,0)
@@ -23,7 +23,6 @@ darkBlue = (0,0,128)
 white = (255,255,255)
 black = (0,0,0)
 pink = (255,200,200)
-
 
 screen = pygame.display.set_mode((width,height))
 screen.fill(black)
@@ -48,17 +47,21 @@ def drawPlanets(screen,coords,colorlist):
     radius = 50
     for i in range(len(coords)):
         pygame.draw.circle(screen, colorlist[i], (coords[i][0],coords[i][1]), radius, radius)
+
+def button(x0,y0,w,h):
+    pygame.draw.rect(screen, green,(x0,y0,w,h))
     
-def step(screen,planetCoords,planetColors,planetMasses,rocketCoords,rocketMass,rocketV):
-    rocket = drawRocket(screen,rocketCoords,white)
-    drawPlanets(screen,planetCoords,planetColors)
-    pygame.draw.rect(screen, green,(0,height-height/20,100,height/20))
     mouse = pygame.mouse.get_pressed()
     if mouse[0] == 1:
         x,y = pygame.mouse.get_pos()
-        if (x>= 0 and x <= 100):
-            if (y >= height-height/20 and y<= height):
-                print("pressed fr")
+        if ((x>= x0 and x <= x0+w and y >= y0 and y<=y0+h)):
+            return True
+    else:
+        return False
+
+def step(screen,planetCoords,planetColors,planetMasses,rocketCoords,rocketMass,rocketV):
+    rocket = drawRocket(screen,rocketCoords,white)
+    drawPlanets(screen,planetCoords,planetColors)
     
     if (not collision(planetCoords,rocketCoords,width,height)):
         force = gravity(planetCoords,rocketCoords,planetMasses,rocketMass)
@@ -74,8 +77,16 @@ while True:
              pygame.quit(); sys.exit()
              
     screen.fill(black)
-    textsurface = myfont.render('Gravity Lines', False, white)
-    screen.blit(textsurface, (-100+width/2,100+height/2))
-    
-    step(screen,planetCoords,planetColors,planetMasses,rocketCoords,rocketMass,rocketV)
+    startFont = pygame.font.SysFont("monospace", 30)
+    startText = startFont.render('Gravity Lines', False, white)
+    screen.blit(startText, (-100+width/2,100+height/2))
+
+    if button(0,.8*height,.2*width,.2*height):
+        run = True
+    if button(.8*width,.8*height,.2*width,.2*height):
+        run = False
+    if run:
+        step(screen,planetCoords,planetColors,planetMasses,rocketCoords,rocketMass,rocketV)
+        
+
     pygame.display.update()
