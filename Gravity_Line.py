@@ -13,11 +13,6 @@ pygame.font.init()
 width = 1080
 height = 600
 
-dt = .5
-run = False
-level = 0
-reset = False
-
 red = (255,0,0)
 green = (0,128,0)
 blue = (0,0,255)
@@ -33,6 +28,7 @@ pygame.display.update()
 
 rocketMass = 100
 rocketCoords = Vec2d(width/2,height-height/10)
+rocketPath = [(rocketCoords[0],rocketCoords[1])]
 rocketV = Vec2d(0,-0.2)
 
 planetCoords = [Vec2d(530,300),Vec2d(300,500)]
@@ -64,12 +60,18 @@ def button(text,color,x0,y0,w,h):
     else:
         return False
 
-def step(screen,planetCoords,planetColors,planetMasses,rocketCoords,rocketMass,rocketV):
-        force = gravity(planetCoords,rocketCoords,planetMasses,rocketMass)
-        a = force/rocketMass
-        rocketV += a*dt
-        rocketCoords += rocketV*dt
-    
+def step(screen,pCoords,pColors,pMasses,rCoords,rMass,rV,rPath):
+    force = gravity(pCoords,rCoords,pMasses,rMass)
+    a = force/rMass
+    rV += a*dt
+    rCoords += rocketV*dt
+    rPath.append((rCoords[0],rCoords[1]))
+
+dt = .5
+run = False
+level = 0
+reset = False
+
 while True:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
@@ -89,27 +91,36 @@ while True:
             level +=1
             reset = True
     
-    if level==1:
-        if reset:
+    if reset:
+        if level==1:
             #Reset to initial conditions
             rocketCoords = Vec2d(.8*width,height/2)
             rocketV = Vec2d(0,-.2)
             planetCoords = [Vec2d(530,300),Vec2d(300,500)]
             planetMasses = [100,100]
             planetColors = [pink,red]
-            reset = False
-            
+        elif level==2:
+            rocketCoords = Vec2d(.8*width,height/2)
+            rocketV = Vec2d(0,-.2)
+            planetCoords = [Vec2d(530,300),Vec2d(300,500)]
+            planetMasses = [100,100]
+            planetColors = [pink,red]
+        rocketPath=[(rocketCoords[0],rocketCoords[1])]
+        reset = False
+        run = False
+
+    if level>0:
         drawPlanets(screen,planetCoords,planetColors)
         drawRocket(screen,rocketCoords,white)
-
+        if len(rocketPath)>1:
+            pygame.draw.lines(screen,white,False,rocketPath,1)
         if button("Start",green,0,.8*height,.2*width,.2*height):
             run = True
         if button("Reset",red,.8*width,.8*height,.2*width,.2*height):
             reset = True
         if collision(planetCoords,rocketCoords,width,height):
-            pygame.quit(); sys.exit()
+            run = False
 
     if run:
-        step(screen,planetCoords,planetColors,planetMasses,rocketCoords,rocketMass,rocketV)
-
+        step(screen,planetCoords,planetColors,planetMasses,rocketCoords,rocketMass,rocketV,rocketPath)
     pygame.display.update()
