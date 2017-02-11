@@ -119,13 +119,18 @@ dt = 5          #time step
 run = False     #when simulation is running or not
 level = 0       #what level the game is on. 0 is start screen
 reset = False   #if simulation should be reset or not
+killme = True
+resetRocket = False
 
 while True:
     #Exit
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
              pygame.quit(); sys.exit()
-             
+        if (event.type == pygame.MOUSEBUTTONDOWN) and not run and killme:
+            makePlanet()
+    killme = True
+    
     screen.fill(black)
     drawStars(screen)
     
@@ -162,8 +167,9 @@ while True:
         if level==2:
             rocketCoords = Vec2d(.2*width,.75*height)
             rocketV = Vec2d(.3,-.2)
-            planetCoords = [Vec2d(width/2,height/2)]
+            planetCoords = [Vec2d(width-50,50)]
             planetMasses = [100]
+            rocketCoordsi = rocketCoords
         rocketPath=[(rocketCoords[0],rocketCoords[1])]
         reset = False
         run = False
@@ -176,16 +182,14 @@ while True:
             pygame.draw.lines(screen,white,False,rocketPath,1)
         if button("Start",green,0,.8*height,.2*width,.2*height):
             run = True
-        else:
-            for event in pygame.event.get():
-                if (event.type == pygame.MOUSEBUTTONDOWN) and not run:
-                    makePlanet()
         if passedLevel(rocketCoords,winBox):
             run = False
             if button("You Won! Next Level",yellow,width/2-100,height/2-30,200,60):
                 level = -3
-        if button("Reset",red,.8*width,.8*height,.2*width,.2*height):
+        if button("Reset All",red,.8*width,.8*height,.2*width,.2*height):
             reset = True
+        if button("Reset Rocket",blue,0,0,0.2*width,0.2*height):
+            resetRocket = True
         if collision(planetCoords,rocketCoords,width,height):
             run = False
 
