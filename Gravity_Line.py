@@ -178,7 +178,15 @@ while True:
                 level = 2
                 reset = True
         if level == -4:
-            text("HOW U HERE TOO FUCK",50,height*0.1,white,50)
+            text("Now that you have gotten a feel for the force of gravity, let's look at gravitational potential",
+                 50,height*0.1,white,30)
+            text("Gravitional potential is the energy associated with a gravitational field at points in space",
+                 50,height*0.1+30,white,30)
+            text("As convention, gravitational potential at infinity is taken to be 0",
+                 50,height*0.1+70,white,30)
+            text("As a result, gravitional potential is usually negative",50,height*0.1+100,white,30)
+            text("In the next level, try to get to the yellow box when there is a large potential well caused by two planets",
+                 50,height*0.1+130,white,30)
 
     #Reset planets and rocket to initial positions
     if reset:             
