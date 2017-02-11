@@ -115,22 +115,29 @@ while True:
             level +=1
             reset = True
     
-    if level==1:
-        if reset:
+    if reset:
+        if level==1:
             #Reset to initial conditions
             rocketCoords = Vec2d(.8*width,height/2)
             rocketV = Vec2d(0,-.2)
             planetCoords = []
             planetMasses = []
             planetColors = [pink,red]
-            reset = False
-            run = False
-            
+        elif level==2:
+            rocketCoords = Vec2d(.8*width,height/2)
+            rocketV = Vec2d(0,-.2)
+            planetCoords = []
+            planetMasses = []
+            planetColors = [pink,red]
+        reset = False
+        run = False
+        
+    if level>0:
         drawPlanets(screen,planetCoords,MainColors)
         drawRocket(screen,rocketCoords,white)
         drawStars(screen)
-        makePlanet()
-
+        if not run:
+            makePlanet()
         if button("Start",green,0,.8*height,.2*width,.2*height):
             run = True
         if button("Reset",red,.8*width,.8*height,.2*width,.2*height):
