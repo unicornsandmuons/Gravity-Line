@@ -161,8 +161,15 @@ while True:
         if button("Play",blue,2*width/3.0,height/5,200,75):
             level = 2
             reset = True
+        text("Watch the rocket as it goes to the red planet",50,height/2.0,white,30)
+        text("You can even click to make new planets",50,height/2.0+40,white,30)
+        text("Try to get it into the yellow box without crashing",50,height/2.0+70,white,30)
     if level == -3:
-        text("HOW TF U PASS BITCH",50,height*0.1,white,50)
+        text("How does gravity work though?",50,height*0.1,white,50)
+        text("Isaac Newton was one of the first people to attempt to give a mathematical description of gravity",
+             20,height*0.1+60,white,25)
+        text("His work tells us that the force of gravity is an inverse square law",
+             20,height*0.1+80,white,25)
         
     if reset:             
         if level==2:
@@ -186,7 +193,7 @@ while True:
         if passedLevel(rocketCoords,winBox):
             run = False
             if button("You Won! Next Level",yellow,width/2-100,height/2-30,200,60):
-                level = -3
+                level = -1*level-1
         if button("Reset All",red,.8*width,.8*height,.2*width,.2*height):
             reset = True
         if button("Reset Rocket",blue,0,0,0.2*width,0.2*height):
