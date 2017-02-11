@@ -94,10 +94,10 @@ def button(text,color,x0,y0,w,h):
     else:
         return False
 
-def text(text,x0,y0,w,h,color,size):
+def text(text,x0,y0,color,size):
     textFont = pygame.font.SysFont("monospace", size)
     makeText = textFont.render(text, False, color)
-    screen.blit(makeText,(x0+(w-textFont.size(text)[0])/2,y0+(h-textFont.size(text)[1])/2))
+    screen.blit(makeText,(x0,y0))
 
 #Iterate rocket
 def step(screen,pCoords,pMasses,rCoords,rMass,rV,rPath):
@@ -170,6 +170,14 @@ while True:
              20,height*0.1+60,white,25)
         text("His work tells us that the force of gravity is an inverse square law",
              20,height*0.1+80,white,25)
+        text("This means that the force is proportional to 1 over the square of the distance between the objects",
+             20,height*0.1+110,white,25)
+        text("In the next level, try to get inside the yellow square without hitting the massless rectangle",
+             20,height*0.1+150,white,25)
+        if button("Play",blue,2*width/3.0,height/5,200,75):
+            level = 3
+            reset = True
+
         
     #Reset planets and rocket to initial positions
 
@@ -179,7 +187,6 @@ while True:
             rocketV = Vec2d(.3,-.2)
             planetCoords = [Vec2d(width-50,50)]
             planetMasses = [100]
-            rocketCoordsi = rocketCoords
         rocketPath=[(rocketCoords[0],rocketCoords[1])]
         reset = False
         run = False
@@ -190,9 +197,13 @@ while True:
             rocketCoords = Vec2d(.2*width,.75*height)
             rocketV = Vec2d(.3,-.2)
         rocketPath=[(rocketCoords[0],rocketCoords[1])]
+        if level ==3:
+            rocketCoords = Vec2d(.2*width,.75*height)
+            rocketV = Vec2d(.3,-.2)
         resetRocket = False
         run = False
 
+  
     #Gameplay events
     if level>0:
         drawPlanets(screen,planetCoords,MainColors)
